@@ -46,7 +46,12 @@ void FlippersTeleop::joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg)
     }
     else
     {
-        if (button1_index_ < 0 || button1_index_ >= static_cast<int>(msg->buttons.size()))
+        bool button1_valid = (button1_index_ >= 0 &&
+                              button1_index_ < static_cast<int>(msg->buttons.size()));
+        bool button2_valid = (button2_index_ >= 0 &&
+                              button2_index_ < static_cast<int>(msg->buttons.size()));
+
+        if (!button1_valid)
         {
             RCLCPP_WARN_THROTTLE(
                 get_logger(),
@@ -55,16 +60,9 @@ void FlippersTeleop::joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg)
                 "Button index %d out of range (buttons size: %zu)",
                 button1_index_,
                 msg->buttons.size());
-            latched_ = false;
         }
-        else
-        {
-            if (msg->buttons[button1_index_])
-            {
-                latched_ = true;
-            }
-        }
-        if (button2_index_ < 0 || button2_index_ >= static_cast<int>(msg->buttons.size()))
+
+        if (!button2_valid)
         {
             RCLCPP_WARN_THROTTLE(
                 get_logger(),
@@ -73,15 +71,30 @@ void FlippersTeleop::joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg)
                 "Button index %d out of range (buttons size: %zu)",
                 button2_index_,
                 msg->buttons.size());
-            latched_ = false;
         }
-        else
+
+        // Latch on rising edge of button1 only
+        if (button1_valid)
         {
-            if (msg->buttons[button2_index_])
+            int cur = msg->buttons[button1_index_];
+            if (cur && !prev_button1_)
+            {
+                latched_ = true;
+            }
+            prev_button1_ = cur;
+        }
+
+        // Unlatch on rising edge of button2 only
+        if (button2_valid)
+        {
+            int cur = msg->buttons[button2_index_];
+            if (cur && !prev_button2_)
             {
                 latched_ = false;
             }
+            prev_button2_ = cur;
         }
+
         out.data = latched_;
     }
 

@@ -124,3 +124,42 @@ TEST_F(JoyToBoolNodeTest, latchModeSetsTrueWithButton1AndFalseWithButton2)
   executor_.remove_node(helper_node_);
   executor_.remove_node(node);
 }
+
+TEST_F(JoyToBoolNodeTest, latchModeSetsTrueWithButton1AndFalseWithButton2AndKeepsFalse)
+{
+  rclcpp::NodeOptions options;
+  options.append_parameter_override("button1_index", 14);
+  options.append_parameter_override("button2_index", 15);
+
+  auto node = std::make_shared<FlippersTeleop>(options);
+  createIo();
+
+  executor_.add_node(node);
+  executor_.add_node(helper_node_);
+
+  auto off = std::vector<int32_t>(16, 0);
+  auto button1_pressed = std::vector<int32_t>(16, 0);
+  button1_pressed[14] = 1;
+  auto button2_pressed = std::vector<int32_t>(16, 0);
+  button2_pressed[15] = 1;
+
+  EXPECT_TRUE(publishAndWait(off, false));
+  EXPECT_TRUE(publishAndWait(off, false));
+  EXPECT_TRUE(publishAndWait(off, false));
+  
+  EXPECT_TRUE(publishAndWait(button1_pressed, true));
+  EXPECT_TRUE(publishAndWait(off, true));
+  EXPECT_TRUE(publishAndWait(off, true));
+  EXPECT_TRUE(publishAndWait(off, true));
+
+
+  EXPECT_TRUE(publishAndWait(button2_pressed, false));
+  EXPECT_TRUE(publishAndWait(off, false));
+  EXPECT_TRUE(publishAndWait(off, false));
+  EXPECT_TRUE(publishAndWait(off, false));
+
+  executor_.remove_node(helper_node_);
+  executor_.remove_node(node);
+}
+
+
