@@ -19,7 +19,7 @@ private:
   int button2_index_;
   bool latch_mode_ = false;
   std::string joy_topic_ = "~/joy";
-  std::string flippers_topic_ = "~/bool";
+  std::string bool_topic_ = "~/bool";
   bool use_stamped_ = false;
 
   // Track previous button states for edge detection
