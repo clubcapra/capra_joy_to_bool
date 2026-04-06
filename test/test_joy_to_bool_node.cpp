@@ -79,7 +79,7 @@ TEST_F(JoyToBoolNodeTest, momentaryModePublishesButtonState)
   rclcpp::NodeOptions options;
   options.append_parameter_override("button1_index", 5);
 
-  auto node = std::make_shared<FlippersTeleop>(options);
+  auto node = std::make_shared<JoyToBool>(options);
   createIo();
 
   executor_.add_node(node);
@@ -103,7 +103,7 @@ TEST_F(JoyToBoolNodeTest, latchModeSetsTrueWithButton1AndFalseWithButton2)
   options.append_parameter_override("button1_index", 14);
   options.append_parameter_override("button2_index", 15);
 
-  auto node = std::make_shared<FlippersTeleop>(options);
+  auto node = std::make_shared<JoyToBool>(options);
   createIo();
 
   executor_.add_node(node);
@@ -131,7 +131,7 @@ TEST_F(JoyToBoolNodeTest, latchModeSetsTrueWithButton1AndFalseWithButton2AndKeep
   options.append_parameter_override("button1_index", 14);
   options.append_parameter_override("button2_index", 15);
 
-  auto node = std::make_shared<FlippersTeleop>(options);
+  auto node = std::make_shared<JoyToBool>(options);
   createIo();
 
   executor_.add_node(node);
