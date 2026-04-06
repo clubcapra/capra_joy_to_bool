@@ -8,6 +8,7 @@ endif()
 set(THIS_PROJECT_DEPEND
   rclcpp
   std_msgs
+  capra_control_msgs
   sensor_msgs
 )
 

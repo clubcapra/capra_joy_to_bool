@@ -3,11 +3,12 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <capra_control_msgs/msg/bool_stamped.hpp>
 
-class FlippersTeleop : public rclcpp::Node
+class JoyToBool : public rclcpp::Node
 {
 public:
-  explicit FlippersTeleop(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+  explicit JoyToBool(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
 private:
   void joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg);
@@ -19,6 +20,7 @@ private:
   bool latch_mode_ = false;
   std::string joy_topic_ = "~/joy";
   std::string flippers_topic_ = "~/bool";
+  bool use_stamped_ = false;
 
   // Track previous button states for edge detection
   int prev_button1_ = 0;
@@ -26,4 +28,5 @@ private:
 
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr sub_;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr pub_;
+  rclcpp::Publisher<capra_control_msgs::msg::BoolStamped>::SharedPtr pub_stamped_;
 };
